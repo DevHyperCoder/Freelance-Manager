@@ -1,5 +1,6 @@
 import curses
 from freelance_manager.constants import freelance_manager_welcome, exit_help
+import traceback
 
 
 def init():
@@ -11,17 +12,28 @@ def init():
 
     # wide try catch so term doesnt get messed up
     try:
-        screen.clear()
+        key = 0
+        while True:
 
-        screen.addstr(0, 0, freelance_manager_welcome, curses.A_BOLD)
-        screen.addstr(curses.LINES - 1, 0, exit_help)
+            # Break with q
+            if key == ord("q"):
+                break
 
-        screen.refresh()
+            screen.clear()
 
+            screen.addstr(0, 0, freelance_manager_welcome, curses.A_BOLD)
+            screen.addstr(curses.LINES - 1, 0, exit_help)
+
+            screen.refresh()
+
+            key = screen.getch()
+
+    except Exception:
+        # Show traceback
+        error_msg = traceback.format_exc()
+        screen.addstr(0, 0, "ERROR", curses.A_BOLD)
+        screen.addstr(1, 0, f'{error_msg}\n\nPress any key to exit')
         screen.getkey()
-
-    except Exception as e:
-        print(e)
         exit(-1)
 
     finally:
